@@ -10,4 +10,20 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "user",
+        input: false,
+      },
+    },
+  },
+  session: {
+    additionalFields: {
+      role: {
+        type: "string",
+      },
+    },
+  },
 });
