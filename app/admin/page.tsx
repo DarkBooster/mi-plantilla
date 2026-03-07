@@ -57,6 +57,7 @@ export default async function AdminPage() {
                       name: product.name,
                       price: Number(product.price),
                       stock: product.stock,
+                      image: product.image,
                     }}
                   />
                   <DeleteProductButton id={product.id} />

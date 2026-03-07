@@ -35,22 +35,15 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: { role: true },
   });
-
-  if (!user || user.role !== "admin") {
+  if (!user || user.role !== "admin")
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
-  }
 
   const { id } = await params;
   const body = await request.json();
@@ -61,6 +54,7 @@ export async function PATCH(
       name: body.name,
       price: body.price,
       stock: body.stock,
+      image: body.image,
     },
   });
 

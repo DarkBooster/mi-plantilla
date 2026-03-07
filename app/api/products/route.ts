@@ -24,8 +24,9 @@ export async function POST(request: NextRequest) {
       name: body.name,
       price: body.price,
       stock: body.stock,
+      image: body.image,
     },
   });
-
+  
   return NextResponse.json(product);
 }

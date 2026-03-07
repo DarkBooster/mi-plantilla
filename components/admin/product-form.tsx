@@ -2,18 +2,31 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { productSchema, type ProductForm as ProductFormType } from "@/lib/validations";
+import { productSchema, type ProductForm } from "@/lib/validations";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Image from "next/image";
 
 type Props = {
   onSuccess?: () => void;
+  defaultValues?: {
+    name: string;
+    price: number;
+    stock: number;
+    image?: string;
+  };
+  productId?: string;
 };
 
-export function ProductForm({ onSuccess }: Props) {
+export function ProductForm({ onSuccess, defaultValues, productId }: Props) {
   const router = useRouter();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(defaultValues?.image || "");
+  const [uploading, setUploading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -21,13 +34,37 @@ export function ProductForm({ onSuccess }: Props) {
     reset,
   } = useForm({
     resolver: zodResolver(productSchema),
+    defaultValues,
   });
 
-  async function onSubmit(data: ProductFormType) {
-    const response = await fetch("/api/products", {
-      method: "POST",
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
+
+  async function uploadImage(): Promise<string | null> {
+    if (!imageFile) return defaultValues?.image || null;
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    const res = await fetch("/api/upload", { method: "POST", body: formData });
+    const data = await res.json();
+    setUploading(false);
+    return data.secure_url;
+  }
+
+  async function onSubmit(data: ProductForm) {
+    const imageUrl = await uploadImage();
+
+    const url = productId ? `/api/products/${productId}` : "/api/products";
+    const method = productId ? "PATCH" : "POST";
+
+    const response = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, image: imageUrl }),
     });
 
     if (response.ok) {
@@ -54,8 +91,17 @@ export function ProductForm({ onSuccess }: Props) {
         <Input id="stock" type="number" placeholder="0" {...register("stock")} />
         {errors.stock && <p className="text-red-500 text-sm">{errors.stock.message as string}</p>}
       </div>
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Guardando..." : "Guardar producto"}
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="image">Imagen</Label>
+        {imagePreview && (
+          <div className="relative h-32 w-full mb-2">
+            <Image src={imagePreview} alt="Preview" fill className="object-cover rounded-lg" />
+          </div>
+        )}
+        <Input id="image" type="file" accept="image/*" onChange={handleImageChange} />
+      </div>
+      <Button type="submit" disabled={isSubmitting || uploading}>
+        {uploading ? "Subiendo imagen..." : isSubmitting ? "Guardando..." : "Guardar producto"}
       </Button>
     </form>
   );
