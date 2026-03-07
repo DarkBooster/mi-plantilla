@@ -3,6 +3,7 @@
 import { useCart } from "./cart-provider";
 import { Button } from "./ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 type Props = {
   id: string;
@@ -24,7 +25,9 @@ export function ProductCard({ id, name, price, stock, image }: Props) {
           <div className="h-full w-full" />
         )}
       </div>
-      <h2 className="font-semibold">{name}</h2>
+      <Link href={`/products/${id}`}>
+        <h2 className="font-semibold hover:underline cursor-pointer">{name}</h2>
+      </Link>
       <p className="text-zinc-500 text-sm">Stock: {stock}</p>
       <p className="font-bold text-lg">${price}</p>
       <Button className="mt-auto" onClick={() => addItem({ id, name, price })}>
