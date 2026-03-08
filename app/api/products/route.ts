@@ -25,8 +25,10 @@ export async function POST(request: NextRequest) {
       price: body.price,
       stock: body.stock,
       image: body.image,
+      description: body.description,
+      categoryId: body.categoryId || null,
     },
   });
-  
+
   return NextResponse.json(product);
 }

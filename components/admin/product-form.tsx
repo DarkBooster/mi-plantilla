@@ -10,18 +10,26 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 
+type Category = {
+  id: string;
+  name: string;
+};
+
 type Props = {
   onSuccess?: () => void;
+  categories: Category[];
   defaultValues?: {
     name: string;
     price: number;
     stock: number;
     image?: string;
+    description?: string;
+    categoryId?: string;
   };
   productId?: string;
 };
 
-export function ProductForm({ onSuccess, defaultValues, productId }: Props) {
+export function ProductForm({ onSuccess, categories, defaultValues, productId }: Props) {
   const router = useRouter();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(defaultValues?.image || "");
@@ -57,7 +65,6 @@ export function ProductForm({ onSuccess, defaultValues, productId }: Props) {
 
   async function onSubmit(data: ProductForm) {
     const imageUrl = await uploadImage();
-
     const url = productId ? `/api/products/${productId}` : "/api/products";
     const method = productId ? "PATCH" : "POST";
 
@@ -90,6 +97,30 @@ export function ProductForm({ onSuccess, defaultValues, productId }: Props) {
         <Label htmlFor="stock">Stock</Label>
         <Input id="stock" type="number" placeholder="0" {...register("stock")} />
         {errors.stock && <p className="text-red-500 text-sm">{errors.stock.message as string}</p>}
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="description">Descripción</Label>
+        <textarea
+          id="description"
+          placeholder="Descripción del producto..."
+          className="border rounded-md px-3 py-2 text-sm bg-background resize-none h-24 w-full"
+          {...register("description")}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="categoryId">Categoría</Label>
+        <select
+          id="categoryId"
+          className="border rounded-md px-3 py-2 text-sm bg-background w-full"
+          {...register("categoryId")}
+        >
+          <option value="">Sin categoría</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="flex flex-col gap-1">
         <Label htmlFor="image">Imagen</Label>

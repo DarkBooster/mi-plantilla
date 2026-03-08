@@ -11,7 +11,16 @@ import { Button } from "@/components/ui/button";
 import { ProductForm } from "./product-form";
 import { useState } from "react";
 
-export function AddProductDialog() {
+type Category = {
+  id: string;
+  name: string;
+};
+
+type Props = {
+  categories: Category[];
+};
+
+export function AddProductDialog({ categories }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -19,11 +28,11 @@ export function AddProductDialog() {
       <DialogTrigger asChild>
         <Button>Agregar producto</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="overflow-y-auto max-h-[80vh]">
         <DialogHeader>
           <DialogTitle>Nuevo producto</DialogTitle>
         </DialogHeader>
-        <ProductForm onSuccess={() => setOpen(false)} />
+        <ProductForm categories={categories} onSuccess={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
   );

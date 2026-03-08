@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -33,10 +33,11 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  if (!session)
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
@@ -55,6 +56,8 @@ export async function PATCH(
       price: body.price,
       stock: body.stock,
       image: body.image,
+      description: body.description,
+      categoryId: body.categoryId || null,
     },
   });
 
