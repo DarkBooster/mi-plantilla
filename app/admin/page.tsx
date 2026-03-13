@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { AddProductDialog } from "@/components/admin/add-product-dialog";
 import { DeleteProductButton } from "@/components/admin/delete-product-button";
 import { EditProductDialog } from "@/components/admin/edit-product-dialog";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default async function AdminPage() {
   const session = await auth.api.getSession({
@@ -32,7 +34,12 @@ export default async function AdminPage() {
     <main className="max-w-4xl mx-auto px-6 py-10">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Panel de administración</h1>
-        <AddProductDialog categories={categories} />
+        <div className="flex gap-3">
+          <Link href="/admin/stats">
+            <Button variant="outline">Estadísticas</Button>
+          </Link>
+          <AddProductDialog categories={categories} />
+        </div>
       </div>
       <div className="border rounded-xl overflow-hidden">
         <table className="w-full text-sm">
@@ -52,7 +59,9 @@ export default async function AdminPage() {
                 <td className="px-4 py-3 text-zinc-500">
                   {product.category?.name ?? "Sin categoría"}
                 </td>
-                <td className="px-4 py-3">${Number(product.price).toFixed(2)}</td>
+                <td className="px-4 py-3">
+                  ${Number(product.price).toFixed(2)}
+                </td>
                 <td className="px-4 py-3">{product.stock}</td>
                 <td className="px-4 py-3 flex gap-2">
                   <EditProductDialog

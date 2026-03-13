@@ -19,6 +19,7 @@ import { ShoppingCart } from "lucide-react";
 
 export function Navbar() {
   const { data: session } = authClient.useSession();
+  const isAdmin = (session?.user as { role?: string })?.role === "admin";
   const router = useRouter();
 
   async function handleLogout() {
@@ -34,6 +35,7 @@ export function Navbar() {
         .join("")
         .toUpperCase()
     : "";
+
   const { items } = useCart();
   const cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -56,9 +58,15 @@ export function Navbar() {
                 {session.user.email}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/orders")}>
-                Mis pedidos
-              </DropdownMenuItem>
+              {isAdmin ? (
+                <DropdownMenuItem onClick={() => router.push("/admin")}>
+                  Panel de admin
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem onClick={() => router.push("/orders")}>
+                  Mis pedidos
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-red-500">
                 Cerrar sesión

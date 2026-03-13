@@ -4,6 +4,7 @@ import { useCart } from "./cart-provider";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
 
 type Props = {
   id: string;
@@ -30,7 +31,13 @@ export function ProductCard({ id, name, price, stock, image }: Props) {
       </Link>
       <p className="text-zinc-500 text-sm">Stock: {stock}</p>
       <p className="font-bold text-lg">${price}</p>
-      <Button className="mt-auto" onClick={() => addItem({ id, name, price })}>
+      <Button
+        className="mt-auto"
+        onClick={() => {
+          addItem({ id, name, price });
+          toast.success(`${name} agregado al carrito`);
+        }}
+      >
         Agregar al carrito
       </Button>
     </div>

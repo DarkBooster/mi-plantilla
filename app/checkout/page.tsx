@@ -4,12 +4,13 @@ import { useCart } from "@/components/cart-provider";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart();
   const { data: session } = authClient.useSession();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (session === null) {
@@ -18,6 +19,7 @@ export default function CheckoutPage() {
   }, [session, router]);
 
   async function handleConfirm() {
+    setLoading(true);
     const response = await fetch("/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -27,6 +29,8 @@ export default function CheckoutPage() {
     if (response.ok) {
       clearCart();
       router.push("/orders");
+    } else {
+      setLoading(false);
     }
   }
 
@@ -48,7 +52,9 @@ export default function CheckoutPage() {
       </div>
       <div className="border-t pt-4 flex items-center justify-between">
         <p className="text-xl font-bold">Total: ${total.toFixed(2)}</p>
-        <Button onClick={handleConfirm}>Confirmar pedido</Button>
+        <Button onClick={handleConfirm} disabled={loading}>
+          {loading ? "Procesando..." : "Confirmar pedido"}
+        </Button>
       </div>
     </main>
   );
