@@ -41,47 +41,82 @@ export default async function AdminPage() {
           <AddProductDialog categories={categories} />
         </div>
       </div>
-      <div className="border rounded-xl overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-zinc-100 dark:bg-zinc-800">
-            <tr>
-              <th className="text-left px-4 py-3">Nombre</th>
-              <th className="text-left px-4 py-3">Categoría</th>
-              <th className="text-left px-4 py-3">Precio</th>
-              <th className="text-left px-4 py-3">Stock</th>
-              <th className="text-left px-4 py-3">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product.id} className="border-t">
-                <td className="px-4 py-3">{product.name}</td>
-                <td className="px-4 py-3 text-zinc-500">
-                  {product.category?.name ?? "Sin categoría"}
-                </td>
-                <td className="px-4 py-3">
-                  ${Number(product.price).toFixed(2)}
-                </td>
-                <td className="px-4 py-3">{product.stock}</td>
-                <td className="px-4 py-3 flex gap-2">
-                  <EditProductDialog
-                    categories={categories}
-                    product={{
-                      id: product.id,
-                      name: product.name,
-                      price: Number(product.price),
-                      stock: product.stock,
-                      image: product.image,
-                      description: product.description,
-                      categoryId: product.categoryId,
-                    }}
-                  />
-                  <DeleteProductButton id={product.id} />
-                </td>
+
+      {/* Vista desktop - tabla */}
+      <div className="hidden md:block">
+        <div className="border rounded-xl overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-zinc-100 dark:bg-zinc-800">
+              <tr>
+                <th className="text-left px-4 py-3">Nombre</th>
+                <th className="text-left px-4 py-3">Categoría</th>
+                <th className="text-left px-4 py-3">Precio</th>
+                <th className="text-left px-4 py-3">Stock</th>
+                <th className="text-left px-4 py-3">Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {products.map((product) => (
+                <tr key={product.id} className="border-t">
+                  <td className="px-4 py-3">{product.name}</td>
+                  <td className="px-4 py-3 text-zinc-500">
+                    {product.category?.name ?? "Sin categoría"}
+                  </td>
+                  <td className="px-4 py-3">${Number(product.price).toFixed(2)}</td>
+                  <td className="px-4 py-3">{product.stock}</td>
+                  <td className="px-4 py-3 flex gap-2">
+                    <EditProductDialog
+                      categories={categories}
+                      product={{
+                        id: product.id,
+                        name: product.name,
+                        price: Number(product.price),
+                        stock: product.stock,
+                        image: product.image,
+                        description: product.description,
+                        categoryId: product.categoryId,
+                      }}
+                    />
+                    <DeleteProductButton id={product.id} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Vista móvil - cards */}
+      <div className="flex flex-col gap-3 md:hidden">
+        {products.map((product) => (
+          <div key={product.id} className="border rounded-xl p-4 flex flex-col gap-3">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="font-semibold">{product.name}</p>
+                <p className="text-sm text-zinc-500">
+                  {product.category?.name ?? "Sin categoría"}
+                </p>
+              </div>
+              <p className="font-bold">${Number(product.price).toFixed(2)}</p>
+            </div>
+            <p className="text-sm text-zinc-500">Stock: {product.stock}</p>
+            <div className="flex gap-2">
+              <EditProductDialog
+                categories={categories}
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  price: Number(product.price),
+                  stock: product.stock,
+                  image: product.image,
+                  description: product.description,
+                  categoryId: product.categoryId,
+                }}
+              />
+              <DeleteProductButton id={product.id} />
+            </div>
+          </div>
+        ))}
       </div>
     </main>
   );
