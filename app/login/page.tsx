@@ -46,11 +46,21 @@ export default function LoginPage() {
           <CardTitle className="text-2xl text-center">Iniciar sesión</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
             <div className="flex flex-col gap-1">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="tu@email.com" {...register("email")} />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+              <Input
+                id="email"
+                type="email"
+                placeholder="tu@email.com"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              )}
             </div>
             <div className="flex flex-col gap-1">
               <Label htmlFor="password">Contraseña</Label>
@@ -66,18 +76,37 @@ export default function LoginPage() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  {showPassword ? (
+                    <Eye className="h-4 w-4" />
+                  ) : (
+                    <EyeOff className="h-4 w-4" />
+                  )}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-red-500 text-sm">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
-            {errors.root && <p className="text-red-500 text-sm">{errors.root.message}</p>}
+            <Link
+              href="/forgot-password"
+              className="text-sm text-zinc-500 underline text-right"
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
+            {errors.root && (
+              <p className="text-red-500 text-sm">{errors.root.message}</p>
+            )}
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? "Iniciando..." : "Iniciar sesión"}
             </Button>
             <p className="text-center text-sm text-zinc-500">
               ¿No tienes cuenta?{" "}
-              <Link href="/register" className="underline text-zinc-900 dark:text-zinc-100">
+              <Link
+                href="/register"
+                className="underline text-zinc-900 dark:text-zinc-100"
+              >
                 Regístrate
               </Link>
             </p>
